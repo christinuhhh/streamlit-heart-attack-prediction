@@ -105,7 +105,7 @@ def prediction_page():
         with col2:
             Smoking = st.selectbox("Smoking", options=["No", "Yes"], key="Smoking")
             Obesity = st.selectbox("Obesity", options=["No", "Yes"], key="Obesity")
-            Alcohol_Consumption = st.number_input("Alcohol Consumption (units per week)", min_value=0.0, value=st.session_state.get("Alcohol_Consumption", 0.0), step=0.5, key="Alcohol_Consumption")
+            Alcohol_Consumption = st.number_input("Alcohol Consumption (bottles per week)", min_value=0.0, value=st.session_state.get("Alcohol_Consumption", 0.0), step=0.5, key="Alcohol_Consumption")
             Exercise_Hours = st.number_input("Exercise Hours Per Week", min_value=0.0, value=st.session_state.get("Exercise_Hours", 3.0), step=0.5, key="Exercise_Hours")
             Diet = st.selectbox("Diet", options=["Unhealthy", "Average", "Healthy"], key="Diet")
             Stress_Level = st.number_input("Stress Level (0-10)", min_value=0, max_value=10, value=st.session_state.get("Stress_Level", 5), step=1, key="Stress_Level")
