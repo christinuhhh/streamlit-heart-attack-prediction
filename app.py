@@ -169,25 +169,37 @@ def prediction_page():
 def about_page():
     st.title("About This App")
     st.write("""
-    This app uses machine learning models, namely Logistic Regression and Random Forest, to predict the risk of a heart attack. The data is preprocessed by splitting 
-    'Blood Pressure' into 'Systolic' and 'Diastolic', mapping categorical values, and dropping unnecessary columns. 
-    Choose a model, enter patient details, and get a prediction.
-
-    **Logistic Regression:**  
-    Logistic Regression is a statistical model used for binary classification. It fits a linear equation to your input data, 
-    and then applies a sigmoid function to output a probability value between 0 and 1. The outcome is interpreted as a risk 
-    level—typically, values closer to 1 indicate high risk while values near 0 indicate low risk. This model is straightforward 
-    and provides insight into how each feature contributes to the final prediction.
-
-    **Random Forest:**  
-    Random Forest is an ensemble learning method that constructs multiple decision trees during training and outputs the 
-    class that is the mode of the classes (for classification) across all trees. It is robust to overfitting and can handle 
-    complex interactions between variables. Each tree sees a random subset of the features and samples, so the final 
-    prediction is based on the majority vote, improving accuracy and stability.
-
-    Both models have their strengths: Logistic Regression is simpler and more interpretable, while Random Forest often provides 
-    higher accuracy by capturing non-linear patterns and interactions in the data.
+    This app uses machine learning models to predict the risk of a heart attack. The data is preprocessed by splitting 
+    'Blood Pressure' into 'Systolic' and 'Diastolic', converting text values to numbers, and removing unnecessary information.
+    You can choose a model, enter your health details, and then get a prediction.
     """)
+
+    st.write("Below are simple explanations of the two models used:")
+
+    # Create two columns for the explanations
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.subheader("Logistic Regression")
+        st.markdown("""
+        **What it does:**  
+        Think of Logistic Regression like a simple calculator that weighs different factors—such as age, blood pressure, and cholesterol—to give you a risk number between 0 (low risk) and 1 (high risk).  
+        
+        **Why use it:**  
+        It provides one clear answer based on a weighted combination of your health details. It’s simple and easy to understand.
+        """)
+    
+    with col2:
+        st.subheader("Random Forest")
+        st.markdown("""
+        **What it does:**  
+        Random Forest is like asking a group of doctors for their opinions. It builds many small decision trees and then takes a vote on what the overall risk should be.  
+        
+        **Why use it:**  
+        By considering the opinions of many models, it can handle more complex information and is often more robust in its predictions.
+        """)
+
+    st.write("Both models provide useful insights into your heart attack risk, but they take slightly different approaches to the prediction.")
 
 
 def main():
