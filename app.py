@@ -183,3 +183,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+import os
+st.write("Current working directory:", os.getcwd())
+st.write("Scalers path exists:", os.path.exists(scalers_path))

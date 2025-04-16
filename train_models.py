@@ -76,3 +76,4 @@ joblib.dump(rf_model, "models/random_forest_model.pkl")
 joblib.dump(scalers, "scalers/scalers.pkl")
 
 print("Models and scalers saved successfully!")
+

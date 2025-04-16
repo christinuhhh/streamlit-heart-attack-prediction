@@ -2,12 +2,5 @@
 __pycache__/
 *.pyc
 
-# Ignore virtual environment directories (if any)
-venv/
-env/
-
-# Ignore model files if you don’t want to push them (optional)
-*.pkl
-
 # Ignore streamlit-specific cache
 .streamlit/
