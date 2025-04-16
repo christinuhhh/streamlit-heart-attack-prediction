@@ -114,7 +114,7 @@ def prediction_page():
             Smoking = 1 if Smoking_input == "Yes" else 0
             Obesity_input = st.selectbox("Obesity", options=["No", "Yes"])
             Obesity = 1 if Obesity_input == "Yes" else 0
-            Alcohol_Consumption = st.number_input("Alcohol Consumption (units per week)", min_value=0.0, value=0.0, step=0.5)
+            Alcohol_Consumption = st.number_input("Alcohol Consumption (bottles per week)", min_value=0.0, value=0.0, step=0.5)
             Exercise_Hours = st.number_input("Exercise Hours Per Week", min_value=0.0, value=3.0, step=0.5)
             Diet_input = st.selectbox("Diet", options=["Unhealthy", "Average", "Healthy"])
             if Diet_input == "Unhealthy":
