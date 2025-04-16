@@ -24,7 +24,6 @@ def load_models_and_scalers(model_choice):
     """
     Load the selected model and shared scalers.
     """
-    # Use the local scalers path variable (could also define this inside the function)
     scalers_path = os.path.join("scalers", "scalers.pkl")
 
     
@@ -61,7 +60,6 @@ def predict_diagnosis(datapoint: dict, model, scalers):
     for col in features:
         if col in datapoint:
             value = datapoint[col]
-            # Scale the value using the corresponding scaler.
             scaled_value = scalers[col].transform(np.array([[value]])).flatten()[0]
             datapoint_list.append(scaled_value)
         else:
@@ -71,8 +69,9 @@ def predict_diagnosis(datapoint: dict, model, scalers):
     prediction = model.predict(datapoint_array)[0]
     return prediction
 
+
 # ---------------------------
-# Streamlit Pages
+# Prediction Page
 # ---------------------------
 def prediction_page():
     st.title("Heart Attack Risk Prediction")
@@ -84,79 +83,73 @@ def prediction_page():
     # Load the chosen model and scalers (cached)
     model, scalers = load_models_and_scalers(model_choice)
     
-    # Create a form for input features with two columns
+    # Create a form for input features with two columns for a nicer layout.
     with st.form("prediction_form"):
-        # Create two columns
         col1, col2 = st.columns(2)
-
-        # --------- Column 1: Physical & Medical Attributes ---------
+        
+        # Column 1: Physical & Medical Attributes
         with col1:
-            Age = st.number_input("Age", min_value=0, max_value=120, value=50, step=1)
-            Sex_input = st.selectbox("Sex", options=["Male", "Female"])
-            Sex = 1 if Sex_input == "Male" else 0
-            Cholesterol = st.number_input("Cholesterol", min_value=0.0, value=200.0)
-            Heart_Rate = st.number_input("Heart Rate", min_value=0, value=70, step=1)
-            Diabetes_input = st.selectbox("Diabetes", options=["No", "Yes"])
-            Diabetes = 1 if Diabetes_input == "Yes" else 0
-            Family_History_input = st.selectbox("Family History", options=["No", "Yes"])
-            Family_History = 1 if Family_History_input == "Yes" else 0
-            BMI = st.number_input("BMI", min_value=0.0, value=24.0, step=0.1)
-            Systolic = st.number_input("Systolic", min_value=0, max_value=300, value=120, step=1)
-            Diastolic = st.number_input("Diastolic", min_value=0, max_value=200, value=80, step=1)
-            Previous_Heart_Problems_input = st.selectbox("Previous Heart Problems", options=["No", "Yes"])
-            Previous_Heart_Problems = 1 if Previous_Heart_Problems_input == "Yes" else 0
-            Medication_Use_input = st.selectbox("Medication Use", options=["No", "Yes"])
-            Medication_Use = 1 if Medication_Use_input == "Yes" else 0
-
-        # --------- Column 2: Lifestyle Attributes ---------
+            Age = st.number_input("Age", min_value=0, max_value=120, value=st.session_state.get("Age", 50), step=1, key="Age")
+            Sex = st.selectbox("Sex", options=["Male", "Female"], key="Sex")
+            Cholesterol = st.number_input("Cholesterol", min_value=0.0, value=st.session_state.get("Cholesterol", 200.0), key="Cholesterol")
+            Heart_Rate = st.number_input("Heart Rate", min_value=0, value=st.session_state.get("Heart_Rate", 70), step=1, key="Heart_Rate")
+            Diabetes = st.selectbox("Diabetes", options=["No", "Yes"], key="Diabetes")
+            Family_History = st.selectbox("Family History", options=["No", "Yes"], key="Family_History")
+            BMI = st.number_input("BMI", min_value=0.0, value=st.session_state.get("BMI", 24.0), step=0.1, key="BMI")
+            Systolic = st.number_input("Systolic", min_value=0, max_value=300, value=st.session_state.get("Systolic", 120), step=1, key="Systolic")
+            Diastolic = st.number_input("Diastolic", min_value=0, max_value=200, value=st.session_state.get("Diastolic", 80), step=1, key="Diastolic")
+            Previous_Heart_Problems = st.selectbox("Previous Heart Problems", options=["No", "Yes"], key="Previous_Heart_Problems")
+            Medication_Use = st.selectbox("Medication Use", options=["No", "Yes"], key="Medication_Use")
+        
+        # Column 2: Lifestyle Attributes
         with col2:
-            Smoking_input = st.selectbox("Smoking", options=["No", "Yes"])
-            Smoking = 1 if Smoking_input == "Yes" else 0
-            Obesity_input = st.selectbox("Obesity", options=["No", "Yes"])
-            Obesity = 1 if Obesity_input == "Yes" else 0
-            Alcohol_Consumption = st.number_input("Alcohol Consumption (units per week)", min_value=0.0, value=0.0, step=0.5)
-            Exercise_Hours = st.number_input("Exercise Hours Per Week", min_value=0.0, value=3.0, step=0.5)
-            Diet_input = st.selectbox("Diet", options=["Unhealthy", "Average", "Healthy"])
-            if Diet_input == "Unhealthy":
-                Diet = 0
-            elif Diet_input == "Average":
-                Diet = 1
-            else:
-                Diet = 2
-            Stress_Level = st.number_input("Stress Level (0-10)", min_value=0, max_value=10, value=5, step=1)
-            Sedentary_Hours = st.number_input("Sedentary Hours Per Day", min_value=0.0, value=8.0, step=0.5)
-            Income = st.number_input("Annual Income", min_value=0.0, value=50000.0, step=1000.0)
-            Triglycerides = st.number_input("Triglycerides", min_value=0.0, value=150.0, step=1.0)
-            Physical_Activity_Days = st.number_input("Physical Activity Days Per Week", min_value=0, max_value=7, value=3, step=1)
-            Sleep_Hours = st.number_input("Sleep Hours Per Day", min_value=0.0, max_value=24.0, value=7.0, step=0.5)
+            Smoking = st.selectbox("Smoking", options=["No", "Yes"], key="Smoking")
+            Obesity = st.selectbox("Obesity", options=["No", "Yes"], key="Obesity")
+            Alcohol_Consumption = st.number_input("Alcohol Consumption (units per week)", min_value=0.0, value=st.session_state.get("Alcohol_Consumption", 0.0), step=0.5, key="Alcohol_Consumption")
+            Exercise_Hours = st.number_input("Exercise Hours Per Week", min_value=0.0, value=st.session_state.get("Exercise_Hours", 3.0), step=0.5, key="Exercise_Hours")
+            Diet = st.selectbox("Diet", options=["Unhealthy", "Average", "Healthy"], key="Diet")
+            Stress_Level = st.number_input("Stress Level (0-10)", min_value=0, max_value=10, value=st.session_state.get("Stress_Level", 5), step=1, key="Stress_Level")
+            Sedentary_Hours = st.number_input("Sedentary Hours Per Day", min_value=0.0, value=st.session_state.get("Sedentary_Hours", 8.0), step=0.5, key="Sedentary_Hours")
+            Income = st.number_input("Income", min_value=0.0, value=st.session_state.get("Income", 50000.0), step=1000.0, key="Income")
+            Triglycerides = st.number_input("Triglycerides", min_value=0.0, value=st.session_state.get("Triglycerides", 150.0), step=1.0, key="Triglycerides")
+            Physical_Activity_Days = st.number_input("Physical Activity Days Per Week", min_value=0, max_value=7, value=st.session_state.get("Physical_Activity_Days", 3), step=1, key="Physical_Activity_Days")
+            Sleep_Hours = st.number_input("Sleep Hours Per Day", min_value=0.0, max_value=24.0, value=st.session_state.get("Sleep_Hours", 7.0), step=0.5, key="Sleep_Hours")
         
         submitted = st.form_submit_button("Predict")
-    
     if submitted:
-        # Assemble all input values into a dictionary matching the feature list order.
+        # Convert selectbox values to numeric as needed.
+        Sex_val = 1 if st.session_state["Sex"] == "Male" else 0
+        Diabetes_val = 1 if st.session_state["Diabetes"] == "Yes" else 0
+        Family_History_val = 1 if st.session_state["Family_History"] == "Yes" else 0
+        Previous_Heart_Problems_val = 1 if st.session_state["Previous_Heart_Problems"] == "Yes" else 0
+        Medication_Use_val = 1 if st.session_state["Medication_Use"] == "Yes" else 0
+        Smoking_val = 1 if st.session_state["Smoking"] == "Yes" else 0
+        Obesity_val = 1 if st.session_state["Obesity"] == "Yes" else 0
+        Diet_val = 0 if st.session_state["Diet"] == "Unhealthy" else (1 if st.session_state["Diet"] == "Average" else 2)
+
         datapoint = {
-            'Age': Age,
-            'Sex': Sex,
-            'Cholesterol': Cholesterol,
-            'Heart Rate': Heart_Rate,
-            'Diabetes': Diabetes,
-            'Family History': Family_History,
-            'Smoking': Smoking,
-            'Obesity': Obesity,
-            'Alcohol Consumption': Alcohol_Consumption,
-            'Exercise Hours Per Week': Exercise_Hours,
-            'Diet': Diet,
-            'Previous Heart Problems': Previous_Heart_Problems,
-            'Medication Use': Medication_Use,
-            'Stress Level': Stress_Level,
-            'Sedentary Hours Per Day': Sedentary_Hours,
-            'Income': Income,
-            'BMI': BMI,
-            'Triglycerides': Triglycerides,
-            'Physical Activity Days Per Week': Physical_Activity_Days,
-            'Sleep Hours Per Day': Sleep_Hours,
-            'Systolic': Systolic,
-            'Diastolic': Diastolic
+            'Age': st.session_state["Age"],
+            'Sex': Sex_val,
+            'Cholesterol': st.session_state["Cholesterol"],
+            'Heart Rate': st.session_state["Heart_Rate"],
+            'Diabetes': Diabetes_val,
+            'Family History': Family_History_val,
+            'Smoking': Smoking_val,
+            'Obesity': Obesity_val,
+            'Alcohol Consumption': st.session_state["Alcohol_Consumption"],
+            'Exercise Hours Per Week': st.session_state["Exercise_Hours"],
+            'Diet': Diet_val,
+            'Previous Heart Problems': Previous_Heart_Problems_val,
+            'Medication Use': Medication_Use_val,
+            'Stress Level': st.session_state["Stress_Level"],
+            'Sedentary Hours Per Day': st.session_state["Sedentary_Hours"],
+            'Income': st.session_state["Income"],
+            'BMI': st.session_state["BMI"],
+            'Triglycerides': st.session_state["Triglycerides"],
+            'Physical Activity Days Per Week': st.session_state["Physical_Activity_Days"],
+            'Sleep Hours Per Day': st.session_state["Sleep_Hours"],
+            'Systolic': st.session_state["Systolic"],
+            'Diastolic': st.session_state["Diastolic"]
         }
         prediction = predict_diagnosis(datapoint, model, scalers)
         if prediction == 1:
@@ -164,47 +157,38 @@ def prediction_page():
         else:
             st.success("Prediction: Low risk of heart attack")
 
-
-
+# ---------------------------
+# About Page
+# ---------------------------
 def about_page():
     st.title("About This App")
     st.write("""
-    This app uses machine learning models, namely Logistic Regression and Random Forest, to predict the risk of a heart attack. The data is preprocessed by splitting 
-    'Blood Pressure' into 'Systolic' and 'Diastolic', converting text values to numbers, and removing unnecessary information.
-    You can choose a model, enter your health details, and then get a prediction.
+    This app uses machine learning models to predict the risk of a heart attack.
+    The data is preprocessed by splitting 'Blood Pressure' into 'Systolic' and 'Diastolic', converting text values to numbers,
+    and removing unnecessary information. Choose a model, enter your health details, and get a prediction.
     """)
-
-    st.write("Below are simple explanations of the two models used:")
-
-    # Create two columns for the explanations
     col1, col2 = st.columns(2)
-
     with col1:
         st.subheader("Logistic Regression")
         st.markdown("""
         **What it does:**  
-        Think of Logistic Regression like a simple calculator that weighs different factors—such as age, blood pressure, and cholesterol—to give you a risk number between 0 (low risk) and 1 (high risk).  
+        Acts like a simple calculator that weighs your health details to provide a risk number between 0 and 1.
         
         **Why use it:**  
-        It provides one clear answer based on a weighted combination of your health details. It’s simple and easy to understand.
+        It’s straightforward and easy to understand.
         """)
-    
     with col2:
         st.subheader("Random Forest")
         st.markdown("""
         **What it does:**  
-        Random Forest is like asking a group of doctors for their opinions. It builds many small decision trees and then takes a vote on what the overall risk should be.  
+        Builds many small decision trees (like asking a group of experts) and takes a vote on your risk.
         
         **Why use it:**  
-        By considering the opinions of many models, it can handle more complex information and is often more robust in its predictions.
+        It can handle complex patterns and is often very reliable.
         """)
 
-    st.write("Both models provide useful insights into your heart attack risk, but they take slightly different approaches to the prediction.")
-
-
-
 def main():
-    st.sidebar.title("Heart Attack Prediction App")
+    st.sidebar.title("Navigation")
     page = st.sidebar.radio("Go to", ["Predict", "About"])
     
     if page == "Predict":
@@ -214,3 +198,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
