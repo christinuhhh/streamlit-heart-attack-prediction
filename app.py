@@ -160,7 +160,7 @@ def prediction_page():
         }
         prediction = predict_diagnosis(datapoint, model, scalers)
         if prediction == 1:
-            st.red("Prediction: High risk of heart attack")
+            st.error("Prediction: High risk of heart attack")
         else:
             st.success("Prediction: Low risk of heart attack")
 
